@@ -16,6 +16,7 @@ const ComboboxInlineAutocomplete = () => {
       labelText="Choice 3 Fruit or Vegetable"
       searchFn={searchVeggies}
       shouldAutoSelect
+      shouldAutoComplete
       showDropdown
       onHide={handleHide}
       onShow={handleShow}

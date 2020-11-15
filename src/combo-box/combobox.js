@@ -8,6 +8,7 @@ const Combobox = ({
   id: idProp,
   searchFn,
   shouldAutoSelect,
+  shouldAutoComplete,
   showDropdown,
   labelText
 }) => {
@@ -278,7 +279,7 @@ const Combobox = ({
           <input
             ref={input}
             type="text"
-            aria-autocomplete="list"
+            aria-autocomplete={shouldAutoComplete ? "both" : "list"}
             aria-controls={idListbox}
             aria-labelledby={idLabel}
             id={idInput}
@@ -292,7 +293,7 @@ const Combobox = ({
               ref={dropdown}
               className="combobox-dropdown"
               id={idArrow}
-              tabindex="-1"
+              tabIndex="-1"
               role="button"
               aria-label="Show vegetable options"
               onClick={handleDropdownClick}
