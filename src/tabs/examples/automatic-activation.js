@@ -5,7 +5,7 @@ import Tabs from "../Tabs";
 const AutomaticActivationExample = () => {
   return (
     <Tabs>
-      <Tabs.TabPanel id="nils" title="Nils Frahm">
+      <Tabs.TabPanel id="nils" title="Nils Frahm" ariaLabel="Entertainment">
         <p>
           Nils Frahm is a German musician, composer and record producer based in
           Berlin. He is known for combining classical and electronic music and
