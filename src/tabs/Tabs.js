@@ -68,10 +68,11 @@ const TabPanel = ({ children, id, hidden }) => {
   );
 };
 
-const Tabs = ({ children, selectedTabIdx = 0 }) => {
+const Tabs = ({ children, vertical, selectedTabIdx = 0 }) => {
   const root = useRef(null);
   const tablist = useRef(null);
   var delay = useRef(0);
+  const [selectedIdx, setSelectedIdx] = useState(selectedTabIdx);
 
   useEffect(() => {
     // Determine whether there should be a delay
@@ -103,42 +104,14 @@ const Tabs = ({ children, selectedTabIdx = 0 }) => {
   }
 
   // Activates any given tab panel
-  function activateTab(tab, setFocus) {
-    setFocus = setFocus || true;
-    // Deactivate all other tabs
-    deactivateTabs();
-
-    // Remove tabindex attribute
-    tab.removeAttribute("tabindex");
-
-    // Set the tab as selected
-    tab.setAttribute("aria-selected", "true");
-
-    // Get the value of aria-controls (which is an ID)
-    var controls = tab.getAttribute("aria-controls");
-
-    // Remove hidden attribute from tab panel to make it visible
-    document.getElementById(controls).removeAttribute("hidden");
-
+  function activateTab(tab, setFocus = true) {
+    // // Remove hidden attribute from tab panel to make it visible
+    // document.getElementById(controls).removeAttribute("hidden");
+    const index = parseInt(tab.dataset.index, 10);
+    setSelectedIdx(index);
     // Set focus when required
     if (setFocus) {
       tab.focus();
-    }
-  }
-
-  // Deactivate all tabs and tab panels
-  function deactivateTabs() {
-    const tabs = tablist.current.querySelectorAll('[role="tab"]');
-    const panels = root.current.querySelectorAll('[role="tabpanel"]');
-
-    for (let t = 0; t < tabs.length; t++) {
-      tabs[t].setAttribute("tabindex", "-1");
-      tabs[t].setAttribute("aria-selected", "false");
-      tabs[t].removeEventListener("focus", focusEventHandler);
-    }
-
-    for (let p = 0; p < panels.length; p++) {
-      panels[p].setAttribute("hidden", "hidden");
     }
   }
 
@@ -220,8 +193,6 @@ const Tabs = ({ children, selectedTabIdx = 0 }) => {
   // In all other cases only left and right arrow function.
   function determineOrientation(e) {
     var key = e.keyCode;
-    var vertical =
-      tablist.current.getAttribute("aria-orientation") === "vertical";
     var proceed = false;
 
     if (vertical) {
@@ -289,7 +260,7 @@ const Tabs = ({ children, selectedTabIdx = 0 }) => {
             onClick={handleTabClick}
             onKeyDown={handleTabKeyDown}
             onKeyUp={handleTabKeyUp}
-            selected={i === selectedTabIdx}
+            selected={i === selectedIdx}
             title={title}
           />
         );
@@ -301,7 +272,7 @@ const Tabs = ({ children, selectedTabIdx = 0 }) => {
     <div className="tabs" ref={root}>
       {tabstrip}
       {React.Children.map(children, (child, i) => {
-        return React.cloneElement(child, { hidden: i !== selectedTabIdx });
+        return React.cloneElement(child, { hidden: i !== selectedIdx });
       })}
     </div>
   );
