@@ -9,7 +9,9 @@ var keys = {
   up: 38,
   right: 39,
   down: 40,
-  delete: 46
+  delete: 46,
+  enter: 13,
+  space: 32
 };
 
 // Add or substract depending on key pressed
@@ -46,9 +48,9 @@ const Tab = ({
   </button>
 );
 
-const Tabstrip = forwardRef(({ children }, ref) => {
+const Tabstrip = forwardRef(({ ariaLabel, children }, ref) => {
   return (
-    <div ref={ref} role="tablist" aria-label="Entertainment">
+    <div ref={ref} role="tablist" aria-label={ariaLabel}>
       {children}
     </div>
   );
@@ -68,7 +70,13 @@ const TabPanel = ({ children, id, hidden }) => {
   );
 };
 
-const Tabs = ({ children, vertical, selectedTabIdx = 0 }) => {
+const Tabs = ({
+  ariaLabel,
+  children,
+  manualActivation,
+  vertical,
+  selectedTabIdx = 0
+}) => {
   const root = useRef(null);
   const tablist = useRef(null);
   var delay = useRef(0);
@@ -128,12 +136,19 @@ const Tabs = ({ children, vertical, selectedTabIdx = 0 }) => {
       case keys.end:
         e.preventDefault();
         // Activate last tab
-        activateTab(tabs[tabs.length - 1]);
+        if (manualActivation) {
+          focusLastTab();
+        } else {
+          activateTab(tabs[tabs.length - 1]);
+        }
         break;
       case keys.home:
         e.preventDefault();
-        // Activate first tab
-        activateTab(tabs[0]);
+        if (manualActivation) {
+          focusFirstTab();
+        } else {
+          activateTab(tabs[0]);
+        }
         break;
 
       // Up and down are in keydown
@@ -156,6 +171,10 @@ const Tabs = ({ children, vertical, selectedTabIdx = 0 }) => {
         break;
       case keys.delete:
         determineDeletable(e);
+        break;
+      case keys.enter:
+      case keys.space:
+        activateTab(e.target);
         break;
       default:
     }
@@ -217,8 +236,11 @@ const Tabs = ({ children, vertical, selectedTabIdx = 0 }) => {
     var pressed = e.keyCode;
     const tabs = tablist.current.querySelectorAll('[role="tab"]');
 
-    for (let x = 0; x < tabs.length; x++) {
-      tabs[x].addEventListener("focus", focusEventHandler);
+    if (!manualActivation) {
+      for (let x = 0; x < tabs.length; x++) {
+        // When do these get removed ?
+        tabs[x].addEventListener("focus", focusEventHandler);
+      }
     }
 
     if (direction[pressed]) {
@@ -249,7 +271,7 @@ const Tabs = ({ children, vertical, selectedTabIdx = 0 }) => {
   }
 
   const tabstrip = (
-    <Tabstrip ref={tablist}>
+    <Tabstrip ref={tablist} ariaLabel={ariaLabel}>
       {React.Children.map(children, (child, i) => {
         const { id, title, deletable } = child.props;
         return (
@@ -272,7 +294,9 @@ const Tabs = ({ children, vertical, selectedTabIdx = 0 }) => {
     <div className="tabs" ref={root}>
       {tabstrip}
       {React.Children.map(children, (child, i) => {
-        return React.cloneElement(child, { hidden: i !== selectedIdx });
+        return React.cloneElement(child, {
+          hidden: i !== selectedIdx
+        });
       })}
     </div>
   );

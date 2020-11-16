@@ -1,6 +1,9 @@
 import React from "react";
 
-import { AutomaticActivation as AutoTabs } from "./tabs";
+import {
+  AutomaticActivation as AutoTabs,
+  ManualActivation as ManualTabs
+} from "./tabs";
 
 import {
   AutomaticSelectCombobox,
@@ -14,6 +17,7 @@ export default function App() {
   return (
     <div className="App">
       <AutoTabs />
+      <ManualTabs />
 
       <ManualSelectCombobox />
       <br />

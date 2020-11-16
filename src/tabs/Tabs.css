@@ -1,6 +1,7 @@
 .tabs {
   width: 20em;
   font-family: Roboto, sans-serif;
+  margin-bottom: 10px;
 }
 
 [role="tablist"] {
